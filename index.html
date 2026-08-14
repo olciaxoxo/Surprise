@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Filip ❤️</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+    }
+
+    h1 {
+      color: #db2777;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    p {
+      color: #4b5563;
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .btn {
+      background: #ec4899;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 8px;
+      transition: transform 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .btn:hover {
+      background: #db2777;
+      transform: scale(1.05);
+    }
+
+    .btn-no {
+      position: absolute;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+
+    .calendar-day {
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .calendar-day:hover {
+      background: #fbcfe8;
+    }
+
+    .calendar-day.selected {
+      background: #ec4899;
+      color: white;
+    }
+
+    .footer-note {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 25px;
+      line-height: 1.4;
+    }
+
+    .emoji {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STEP 1 -->
+  <div id="step1" class="card">
+    <div class="emoji">💖</div>
+    <h1>Filip, do you like Ola?</h1>
+    <button class="btn" onclick="nextStep(2)">Yes</button>
+    <button class="btn btn-no" id="no1" onmouseover="moveButton('no1')">No</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="card hidden">
+    <div class="emoji">🌹</div>
+    <h1>Filip, do you want to go on a date with Ola?</h1>
+    <button class="btn" onclick="nextStep(3)">Yes</button>
+    <button class="btn btn-no" id="no2" onmouseover="moveButton('no2')">No</button>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" class="card hidden">
+    <div class="emoji">☕🍸🍽️</div>
+    <h1>What would you prefer?</h1>
+    <button class="btn" onclick="selectOption('coffee')">Coffee<br><small>(only where there's Orange espresso)</small></button>
+    <button class="btn" onclick="selectOption('drink')">Drink</button>
+    <button class="btn" onclick="selectOption('dinner')">Dinner (surprise!)</button>
+  </div>
+
+  <!-- STEP 4 -->
+  <div id="step4" class="card hidden">
+    <div class="emoji">📅</div>
+    <h1>Pick a date in September</h1>
+    <div class="calendar" id="calendar"></div>
+    <button class="btn" onclick="confirmDate()">Confirm date</button>
+  </div>
+
+  <!-- STEP 5 -->
+  <div id="step5" class="card hidden">
+    <div class="emoji">🎉</div>
+    <h1>Date confirmed!</h1>
+    <p id="confirmedInfo"></p>
+    <p class="footer-note">
+      Ola spent so much time making this and still didn't figure out how to get an automatic notification about the date 😅<br><br>
+      <strong>Please take a screenshot of this screen and send it to her with the date you're free!</strong>
+    </p>
+  </div>
+
+  <script>
+    let selectedDate = null;
+    let selectedOption = null;
+
+    function nextStep(step) {
+      document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+      document.getElementById('step' + step).classList.remove('hidden');
+
+      if (step === 4) {
+        generateCalendar();
+      }
+    }
+
+    function moveButton(id) {
+      const btn = document.getElementById(id);
+      const maxX = window.innerWidth - btn.offsetWidth - 40;
+      const maxY = window.innerHeight - btn.offsetHeight - 40;
+      const randomX = Math.floor(Math.random() * maxX);
+      const randomY = Math.floor(Math.random() * maxY);
+      btn.style.left = randomX + 'px';
+      btn.style.top = randomY + 'px';
+    }
+
+    function selectOption(option) {
+      selectedOption = option;
+      nextStep(4);
+    }
+
+    function generateCalendar() {
+      const calendar = document.getElementById('calendar');
+      calendar.innerHTML = '';
+      const daysInSeptember = 30;
+
+      for (let day = 1; day <= daysInSeptember; day++) {
+        const d = document.createElement('div');
+        d.className = 'calendar-day';
+        d.textContent = day;
+        d.onclick = () => {
+          document.querySelectorAll('.calendar-day').forEach(x => x.classList.remove('selected'));
+          d.classList.add('selected');
+          selectedDate = day;
+        };
+        calendar.appendChild(d);
+      }
+    }
+
+    function confirmDate() {
+      if (!selectedDate) {
+        alert('Please pick a date first!');
+        return;
+      }
+      const info = `You chose: <strong>${selectedOption}</strong> on <strong>September ${selectedDate}</strong>.`;
+      document.getElementById('confirmedInfo').innerHTML = info;
+      nextStep(5);
+    }
+  </script>
+</body>
+</html>
